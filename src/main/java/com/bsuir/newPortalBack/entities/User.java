@@ -17,7 +17,7 @@ public class User {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  private int id;
 
   @Column(unique = true, nullable = false, length = 50)
   private String username;
@@ -40,4 +40,8 @@ public class User {
     joinColumns = @JoinColumn(name = "user_id"),
     inverseJoinColumns = @JoinColumn(name = "role_id"))
   private List<Role> roles;
+
+  @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  private UserInfo userInfo;
+
 }
