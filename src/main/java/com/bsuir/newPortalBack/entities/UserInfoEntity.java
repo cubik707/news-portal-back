@@ -11,13 +11,13 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UserInfo {
+public class UserInfoEntity {
 
   @Id
   @OneToOne
   @JoinColumn(name = "user_id")
   @NotNull
-  private User user;
+  private UserEntity user;
 
   @Column(nullable = false, length = 100)
   private String surname;

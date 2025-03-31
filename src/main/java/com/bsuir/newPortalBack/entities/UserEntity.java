@@ -13,7 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class User {
+public class UserEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,9 +39,9 @@ public class User {
     name = "user_roles",
     joinColumns = @JoinColumn(name = "user_id"),
     inverseJoinColumns = @JoinColumn(name = "role_id"))
-  private List<Role> roles;
+  private List<RoleEntity> roles;
 
   @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-  private UserInfo userInfo;
+  private UserInfoEntity userInfo;
 
 }
