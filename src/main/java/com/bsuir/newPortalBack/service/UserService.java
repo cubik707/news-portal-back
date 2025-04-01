@@ -1,7 +1,13 @@
 package com.bsuir.newPortalBack.service;
 
+import com.bsuir.newPortalBack.dto.UserDTO;
 import com.bsuir.newPortalBack.entities.RoleEntity;
 import com.bsuir.newPortalBack.entities.UserEntity;
+import com.bsuir.newPortalBack.entities.UserInfoEntity;
+import com.bsuir.newPortalBack.enums.UserRole;
+import com.bsuir.newPortalBack.exception.buisness.RoleNotFoundException;
+import com.bsuir.newPortalBack.exception.buisness.UserAlreadyExistsException;
+import com.bsuir.newPortalBack.mapper.UserMapper;
 import com.bsuir.newPortalBack.repository.RoleRepository;
 import com.bsuir.newPortalBack.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,22 +23,25 @@ public class UserService {
   private UserRepository userRepo;
   private RoleRepository roleRepo;
   private PasswordEncoder passwordEncoder;
+  private UserMapper userMapper;
 
-  public UserEntity registerUser(String username, String password) {
-    if (userRepo.existsByUsername(username)) {
-      throw new RuntimeException("User already exists");
+  public UserEntity register(UserDTO userDTO) {
+    if (userRepo.existsByUsername(userDTO.getUsername())) {
+      throw new UserAlreadyExistsException(userDTO.getUsername());
     }
 
-    UserEntity user = new UserEntity();
-    user.setUsername(username);
-    user.setPasswordHash(passwordEncoder.encode(password));
+    UserEntity user = userMapper.toEntity(userDTO);
+    user.setPasswordHash(passwordEncoder.encode(userDTO.getPassword()));
 
-    // Назначаем дефолтную роль
-    RoleEntity userRole = roleRepo.findByName("USER")
-      .orElseThrow(() -> new RuntimeException("Role USER not found"));
+    // Assign default role
+    RoleEntity userRole = roleRepo.findByName(UserRole.USER.toString())
+      .orElseThrow(() -> new RoleNotFoundException(UserRole.USER.toString()));
     user.getRoles().add(userRole);
 
-    return userRepo.save(user);
+    user = userRepo.save(user);
+
+
+    return user;
   }
 
   public Optional<UserEntity> findByUsername(String username) {

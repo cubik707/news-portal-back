@@ -1,5 +1,6 @@
 package com.bsuir.newPortalBack.entities;
 
+import com.bsuir.newPortalBack.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,6 +16,7 @@ public class RoleEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
 
+  @Enumerated(EnumType.STRING)
   @Column(nullable = false, length = 50)
-  private String name;
+  private UserRole name;
 }
