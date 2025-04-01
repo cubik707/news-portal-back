@@ -2,9 +2,12 @@ package com.bsuir.newPortalBack.controller;
 
 import com.bsuir.newPortalBack.dto.UserDTO;
 import com.bsuir.newPortalBack.entities.UserEntity;
+import com.bsuir.newPortalBack.exception.buisness.UserAlreadyExistsException;
 import com.bsuir.newPortalBack.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,5 +21,10 @@ public class AuthController {
   public ResponseEntity<UserEntity> registerUser(@RequestBody UserDTO userDTO) {
     UserEntity registeredUser = userService.register(userDTO);
     return ResponseEntity.ok(registeredUser);
+  }
+
+  @ExceptionHandler(UserAlreadyExistsException.class)
+  public ResponseEntity<String> handleUserAlreadyExistsException(UserAlreadyExistsException ex) {
+    return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
   }
 }
