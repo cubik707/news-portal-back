@@ -1,5 +1,6 @@
 package com.bsuir.newPortalBack.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -14,9 +15,13 @@ import lombok.Setter;
 public class UserInfoEntity {
 
   @Id
+  private int userId;
+
   @OneToOne
+  @MapsId
   @JoinColumn(name = "user_id")
   @NotNull
+  @JsonBackReference
   private UserEntity user;
 
   @Column(nullable = false, length = 100, name = "last_name")

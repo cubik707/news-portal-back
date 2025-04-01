@@ -45,12 +45,18 @@ public class UserMapper implements BaseMapper<UserEntity, UserDTO> {
       .position(dto.getPosition())
       .department(dto.getDepartment())
       .build();
-
-    return UserEntity.builder()
+    UserEntity user = UserEntity.builder()
       .username(dto.getUsername())
       .email(dto.getEmail())
       .userInfo(userInfo)
       .build();
+
+    // Setting the reverse relationship
+    if (userInfo != null) {
+      userInfo.setUser(user);
+    }
+
+    return user;
   }
 
   @Override

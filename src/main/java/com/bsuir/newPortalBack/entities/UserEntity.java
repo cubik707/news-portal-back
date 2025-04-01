@@ -1,18 +1,18 @@
 package com.bsuir.newPortalBack.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "users")
 @Getter
 @Setter
-@NoArgsConstructor
 public class UserEntity {
 
   @Id
@@ -42,7 +42,12 @@ public class UserEntity {
   private List<RoleEntity> roles;
 
   @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  @JsonManagedReference
   private UserInfoEntity userInfo;
+
+  public UserEntity() {
+    this.roles = new ArrayList<>();
+  }
 
   //Builder pattern implementation
   public static class Builder {
@@ -59,11 +64,6 @@ public class UserEntity {
 
     public Builder email(String email) {
       instance.setEmail(email);
-      return this;
-    }
-
-    public Builder passwordHash(String passwordHash) {
-      instance.setPasswordHash(passwordHash);
       return this;
     }
 
