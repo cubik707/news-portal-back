@@ -37,8 +37,6 @@ public class UserService {
       .orElseThrow(() -> new RoleNotFoundException(UserRole.USER.name()));
     user.getRoles().add(userRole);
 
-    System.out.println("userInfo 📌:" + user.getUserInfo().getPosition());
-
     user = userRepo.save(user);
 
     return user;

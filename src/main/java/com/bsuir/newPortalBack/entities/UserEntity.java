@@ -6,8 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -39,15 +39,11 @@ public class UserEntity {
     name = "user_roles",
     joinColumns = @JoinColumn(name = "user_id"),
     inverseJoinColumns = @JoinColumn(name = "role_id"))
-  private List<RoleEntity> roles;
+  private Set<RoleEntity> roles = new HashSet<>();
 
   @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
   @JsonManagedReference
   private UserInfoEntity userInfo;
-
-  public UserEntity() {
-    this.roles = new ArrayList<>();
-  }
 
   //Builder pattern implementation
   public static class Builder {
