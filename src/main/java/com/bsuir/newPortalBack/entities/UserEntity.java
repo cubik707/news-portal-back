@@ -53,6 +53,11 @@ public class UserEntity {
       instance = new UserEntity();
     }
 
+    public Builder id(int id) {
+      instance.setId(id);
+      return this;
+    }
+
     public Builder username(String username) {
       instance.setUsername(username);
       return this;

@@ -3,7 +3,7 @@ package com.bsuir.newPortalBack.controller;
 import com.bsuir.newPortalBack.config.jwt.JwtUtil;
 import com.bsuir.newPortalBack.dto.AuthRequest;
 import com.bsuir.newPortalBack.dto.AuthResponse;
-import com.bsuir.newPortalBack.dto.UserDTO;
+import com.bsuir.newPortalBack.dto.UserRegistrationDTO;
 import com.bsuir.newPortalBack.entities.UserEntity;
 import com.bsuir.newPortalBack.exception.buisness.UserAlreadyExistsException;
 import com.bsuir.newPortalBack.security.UserDetailsServiceImpl;
@@ -29,9 +29,9 @@ public class AuthController {
   private final UserService userService;
 
   @PostMapping("/register")
-  public ResponseEntity<?> registerUser(@RequestBody UserDTO userDTO) {
+  public ResponseEntity<?> registerUser(@RequestBody UserRegistrationDTO userRegistrationDTO) {
     try {
-      UserEntity registeredUser = userService.register(userDTO);
+      UserEntity registeredUser = userService.register(userRegistrationDTO);
       UserDetails userDetails = userDetailsService.loadUserByUsername(registeredUser.getUsername());
       String jwtToken = jwtUtil.generateToken(userDetails);
       return ResponseEntity.ok(new AuthResponse(jwtToken));

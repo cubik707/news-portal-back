@@ -1,12 +1,15 @@
 package com.bsuir.newPortalBack.service;
 
-import com.bsuir.newPortalBack.dto.UserDTO;
+import com.bsuir.newPortalBack.dto.UserRegistrationDTO;
+import com.bsuir.newPortalBack.dto.UserResponseDTO;
 import com.bsuir.newPortalBack.entities.RoleEntity;
 import com.bsuir.newPortalBack.entities.UserEntity;
 import com.bsuir.newPortalBack.enums.UserRole;
 import com.bsuir.newPortalBack.exception.buisness.RoleNotFoundException;
 import com.bsuir.newPortalBack.exception.buisness.UserAlreadyExistsException;
-import com.bsuir.newPortalBack.mapper.UserMapper;
+import com.bsuir.newPortalBack.exception.buisness.UserNotFoundException;
+import com.bsuir.newPortalBack.mapper.UserRegistrationMapper;
+import com.bsuir.newPortalBack.mapper.UserResponseMapper;
 import com.bsuir.newPortalBack.repository.RoleRepository;
 import com.bsuir.newPortalBack.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +17,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,15 +24,17 @@ public class UserService {
   private final UserRepository userRepo;
   private final RoleRepository roleRepo;
   private final PasswordEncoder passwordEncoder;
-  private final UserMapper userMapper;
+  private final UserRegistrationMapper userRegistrationMapper;
+  private final UserResponseMapper userResponseMapper;
 
-  public UserEntity register(UserDTO userDTO) {
-    if (userRepo.existsByUsername(userDTO.getUsername())) {
-      throw new UserAlreadyExistsException(userDTO.getUsername());
+
+  public UserEntity register(UserRegistrationDTO userRegistrationDTO) {
+    if (userRepo.existsByUsername(userRegistrationDTO.getUsername())) {
+      throw new UserAlreadyExistsException(userRegistrationDTO.getUsername());
     }
 
-    UserEntity user = userMapper.toEntity(userDTO);
-    user.setPasswordHash(passwordEncoder.encode(userDTO.getPassword()));
+    UserEntity user = userRegistrationMapper.toEntity(userRegistrationDTO);
+    user.setPasswordHash(passwordEncoder.encode(userRegistrationDTO.getPassword()));
 
     // Assign default role
     RoleEntity userRole = roleRepo.findByName(UserRole.USER)
@@ -42,21 +46,55 @@ public class UserService {
     return user;
   }
 
-  public Optional<UserEntity> findByUsername(String username) {
-    return userRepo.findByUsername(username);
+  public UserEntity findByUsername(String username) {
+    return userRepo.findByUsername(username)
+      .orElseThrow(() -> new UserNotFoundException(username));
   }
 
-  public List<UserEntity> getAllUsers() {
-    return userRepo.findAll();
+  public List<UserResponseDTO> getAllUsers() {
+    List<UserEntity> users = userRepo.findAll();
+    return userResponseMapper.toDTOList(users);
   }
 
-  public UserEntity assignRole(String username, UserRole roleName) {
+  public UserResponseDTO getUserById(int id) {
+    UserEntity user = userRepo.findById(id)
+      .orElseThrow(() -> new UserNotFoundException(id));
+    return userResponseMapper.toDTO(user);
+  }
+
+  public UserResponseDTO updateUser(int id, UserRegistrationDTO updatedUserRegistrationDTO) {
+    UserEntity user = userRepo.findById(id)
+      .orElseThrow(() -> new UserNotFoundException(id));
+
+    // Update main fields
+    user.setUsername(updatedUserRegistrationDTO.getUsername());
+    user.setEmail(updatedUserRegistrationDTO.getEmail());
+    user.getUserInfo().setFirstName(updatedUserRegistrationDTO.getFirstName());
+    user.getUserInfo().setLastName(updatedUserRegistrationDTO.getLastName());
+    user.getUserInfo().setSurname(updatedUserRegistrationDTO.getSurname());
+    user.getUserInfo().setPosition(updatedUserRegistrationDTO.getPosition());
+    user.getUserInfo().setDepartment(updatedUserRegistrationDTO.getDepartment());
+
+    UserEntity updatedUser = userRepo.save(user);
+    return userResponseMapper.toDTO(updatedUser);
+  }
+
+  public void deleteUser(int id) {
+    if (!userRepo.existsById(id)) {
+      throw new UserNotFoundException(id);
+    }
+    userRepo.deleteById(id);
+  }
+
+  public UserResponseDTO assignRole(String username, UserRole roleName) {
     UserEntity user = userRepo.findByUsername(username)
-      .orElseThrow(() -> new RuntimeException("User not found"));
+      .orElseThrow(() -> new UserNotFoundException(username));
+
     RoleEntity role = roleRepo.findByName(roleName)
-      .orElseThrow(() -> new RuntimeException("Role not found"));
+      .orElseThrow(() -> new RoleNotFoundException(roleName.name()));
 
     user.getRoles().add(role);
-    return userRepo.save(user);
+    UserEntity updatedUser = userRepo.save(user);
+    return userResponseMapper.toDTO(updatedUser);
   }
 }

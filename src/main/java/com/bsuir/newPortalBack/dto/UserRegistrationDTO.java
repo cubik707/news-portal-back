@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UserDTO {
+public class UserRegistrationDTO {
   private String username;
   private String email;
   private String password;
@@ -17,10 +17,10 @@ public class UserDTO {
 
   //Builder pattern implementation
   public static class Builder {
-    private final UserDTO instance;
+    private final UserRegistrationDTO instance;
 
     public Builder() {
-      instance = new UserDTO();
+      instance = new UserRegistrationDTO();
     }
 
     public Builder username(String username) {
@@ -63,7 +63,7 @@ public class UserDTO {
       return this;
     }
 
-    public UserDTO build() {
+    public UserRegistrationDTO build() {
       return instance;
     }
   }

@@ -1,6 +1,6 @@
 package com.bsuir.newPortalBack.mapper;
 
-import com.bsuir.newPortalBack.dto.UserDTO;
+import com.bsuir.newPortalBack.dto.UserResponseDTO;
 import com.bsuir.newPortalBack.entities.UserEntity;
 import com.bsuir.newPortalBack.entities.UserInfoEntity;
 import org.springframework.stereotype.Component;
@@ -9,32 +9,32 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class UserMapper implements BaseMapper<UserEntity, UserDTO> {
+public class UserResponseMapper implements BaseMapper<UserEntity, UserResponseDTO> {
   @Override
-  public UserDTO toDTO(UserEntity entity) {
+  public UserResponseDTO toDTO(UserEntity entity) {
     if (entity == null) {
       return null;
     }
-    UserDTO.Builder dtoBuilder = UserDTO.builder()
-      .username(entity.getUsername())
+
+    UserResponseDTO.UserResponseDTOBuilder userResponseDTO = UserResponseDTO.builder()
+      .id(entity.getId())
       .email(entity.getEmail())
-      .password(entity.getPasswordHash());
+      .username(entity.getUsername());
 
-    if (entity.getUserInfo() != null) {
-      dtoBuilder
-        .lastName(entity.getUserInfo().getLastName())
+    if(entity.getUserInfo() != null) {
+      userResponseDTO
         .firstName(entity.getUserInfo().getFirstName())
+        .lastName(entity.getUserInfo().getLastName())
         .surname(entity.getUserInfo().getSurname())
-        .position(entity.getUserInfo().getPosition())
-        .department(entity.getUserInfo().getDepartment());
+        .department(entity.getUserInfo().getDepartment())
+        .position(entity.getUserInfo().getPosition());
     }
-
-    return dtoBuilder.build();
+    return userResponseDTO.build();
   }
 
   @Override
-  public UserEntity toEntity(UserDTO dto) {
-    if (dto == null) {
+  public UserEntity toEntity(UserResponseDTO dto) {
+    if(dto == null) {
       return null;
     }
 
@@ -46,6 +46,7 @@ public class UserMapper implements BaseMapper<UserEntity, UserDTO> {
       .department(dto.getDepartment())
       .build();
     UserEntity user = UserEntity.builder()
+      .id(dto.getId())
       .username(dto.getUsername())
       .email(dto.getEmail())
       .userInfo(userInfo)
@@ -60,19 +61,19 @@ public class UserMapper implements BaseMapper<UserEntity, UserDTO> {
   }
 
   @Override
-  public List<UserDTO> toDTOList(List<UserEntity> entityList) {
+  public List<UserResponseDTO> toDTOList(List<UserEntity> entityList) {
     if (entityList == null) {
       return List.of();
     }
+
     return entityList.stream().map(this::toDTO).collect(Collectors.toList());
   }
 
   @Override
-  public List<UserEntity> toEntityList(List<UserDTO> dtoList) {
-    if (dtoList == null) {
+  public List<UserEntity> toEntityList(List<UserResponseDTO> dtoList) {
+    if(dtoList == null) {
       return List.of();
     }
     return dtoList.stream().map(this::toEntity).collect(Collectors.toList());
   }
 }
-

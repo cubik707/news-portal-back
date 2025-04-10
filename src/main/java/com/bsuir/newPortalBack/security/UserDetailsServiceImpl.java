@@ -24,8 +24,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
     Optional<UserEntity> userOptional = userRepo.findByUsername(username);
     if (userOptional.isEmpty()) {
-      logger.warn("User Not Found: {}", username);
-      throw new UsernameNotFoundException("User not found");
+      logger.warn("Пользователь не найден: {}", username);
+      throw new UsernameNotFoundException("Пользователь не найден");
     }
     return new UserDetailsImpl(userOptional.get());
   }
