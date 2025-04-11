@@ -9,6 +9,7 @@ import com.bsuir.newPortalBack.dto.user.UserRegistrationDTO;
 import com.bsuir.newPortalBack.entities.UserEntity;
 import com.bsuir.newPortalBack.security.UserDetailsServiceImpl;
 import com.bsuir.newPortalBack.service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "auth")
 @RestController
 @RequiredArgsConstructor
 public class AuthController {
