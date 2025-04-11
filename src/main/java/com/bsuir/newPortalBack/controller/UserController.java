@@ -1,15 +1,14 @@
 package com.bsuir.newPortalBack.controller;
 
-import com.bsuir.newPortalBack.dto.SuccessResponseDTO;
-import com.bsuir.newPortalBack.dto.UserRegistrationDTO;
-import com.bsuir.newPortalBack.dto.UserResponseDTO;
+import com.bsuir.newPortalBack.dto.response.SuccessResponseDTO;
+import com.bsuir.newPortalBack.dto.user.UserRegistrationDTO;
+import com.bsuir.newPortalBack.dto.user.UserResponseDTO;
 import com.bsuir.newPortalBack.mapper.UserResponseMapper;
 import com.bsuir.newPortalBack.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -21,33 +20,62 @@ public class UserController {
   private final UserResponseMapper userResponseMapper;
 
   @GetMapping
-  public List<UserResponseDTO> getAllUsers() {
-    return userService.getAllUsers();
+  public ResponseEntity<SuccessResponseDTO> getAllUsers() {
+    List<UserResponseDTO> users = userService.getAllUsers();
+    return ResponseEntity.ok(
+      SuccessResponseDTO.create(
+        HttpStatus.OK,
+        "Список пользователей получен успешно",
+        users
+      )
+    );
   }
 
   @GetMapping("/{id}")
-  public UserResponseDTO getUserById(@PathVariable int id) {
-    return userService.getUserById(id);
+  public ResponseEntity<SuccessResponseDTO> getUserById(@PathVariable int id) {
+    UserResponseDTO user = userService.getUserById(id);
+    return ResponseEntity.ok(
+      SuccessResponseDTO.create(
+        HttpStatus.OK,
+        "Пользователь найден",
+        user
+      )
+    );
   }
 
   @PostMapping
-  public UserResponseDTO createUser(@RequestBody UserRegistrationDTO userRegistrationDTO) {
-    return userResponseMapper.toDTO(userService.register(userRegistrationDTO));
+  public ResponseEntity<SuccessResponseDTO> createUser(@RequestBody UserRegistrationDTO userRegistrationDTO) {
+    UserResponseDTO createdUser = userResponseMapper.toDTO(userService.register(userRegistrationDTO));
+    return ResponseEntity.status(HttpStatus.CREATED).body(
+      SuccessResponseDTO.create(
+        HttpStatus.CREATED,
+        "Пользователь успешно создан",
+        createdUser
+      )
+    );
   }
 
   @PutMapping("/{id}")
-  public UserResponseDTO updateUser(@PathVariable int id, @RequestBody UserRegistrationDTO userRegistrationDTO) {
-    return userService.updateUser(id, userRegistrationDTO);
+  public ResponseEntity<SuccessResponseDTO> updateUser(@PathVariable int id, @RequestBody UserRegistrationDTO userRegistrationDTO) {
+    UserResponseDTO updatedUser = userService.updateUser(id, userRegistrationDTO);
+    return ResponseEntity.ok(
+      SuccessResponseDTO.create(
+        HttpStatus.OK,
+        "Пользователь успешно обновлён",
+        updatedUser
+      )
+    );
   }
 
   @DeleteMapping("/{id}")
   public ResponseEntity<SuccessResponseDTO> deleteUser(@PathVariable int id) {
     userService.deleteUser(id);
-
-    return ResponseEntity.ok()
-      .body(SuccessResponseDTO.builder()
-        .timestamp(LocalDateTime.now())
-        .message("Пользователь с ID " + id + " успешно удален")
-        .build());
+    return ResponseEntity.ok(
+      SuccessResponseDTO.create(
+        HttpStatus.OK,
+        "Пользователь с ID " + id + " успешно удалён",
+        null
+      )
+    );
   }
 }

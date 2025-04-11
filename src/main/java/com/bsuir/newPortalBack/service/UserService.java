@@ -1,7 +1,7 @@
 package com.bsuir.newPortalBack.service;
 
-import com.bsuir.newPortalBack.dto.UserRegistrationDTO;
-import com.bsuir.newPortalBack.dto.UserResponseDTO;
+import com.bsuir.newPortalBack.dto.user.UserRegistrationDTO;
+import com.bsuir.newPortalBack.dto.user.UserResponseDTO;
 import com.bsuir.newPortalBack.entities.RoleEntity;
 import com.bsuir.newPortalBack.entities.UserEntity;
 import com.bsuir.newPortalBack.enums.UserRole;

@@ -1,4 +1,4 @@
-package com.bsuir.newPortalBack.dto;
+package com.bsuir.newPortalBack.dto.user;
 
 import lombok.Builder;
 import lombok.Getter;

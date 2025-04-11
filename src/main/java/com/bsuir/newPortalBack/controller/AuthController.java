@@ -1,11 +1,12 @@
 package com.bsuir.newPortalBack.controller;
 
 import com.bsuir.newPortalBack.config.jwt.JwtUtil;
-import com.bsuir.newPortalBack.dto.AuthRequest;
-import com.bsuir.newPortalBack.dto.AuthResponse;
-import com.bsuir.newPortalBack.dto.UserRegistrationDTO;
+import com.bsuir.newPortalBack.dto.auth.AuthRequest;
+import com.bsuir.newPortalBack.dto.auth.AuthResponse;
+import com.bsuir.newPortalBack.dto.response.ErrorResponseDTO;
+import com.bsuir.newPortalBack.dto.response.SuccessResponseDTO;
+import com.bsuir.newPortalBack.dto.user.UserRegistrationDTO;
 import com.bsuir.newPortalBack.entities.UserEntity;
-import com.bsuir.newPortalBack.exception.buisness.UserAlreadyExistsException;
 import com.bsuir.newPortalBack.security.UserDetailsServiceImpl;
 import com.bsuir.newPortalBack.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -30,43 +31,46 @@ public class AuthController {
 
   @PostMapping("/register")
   public ResponseEntity<?> registerUser(@RequestBody UserRegistrationDTO userRegistrationDTO) {
-    try {
-      UserEntity registeredUser = userService.register(userRegistrationDTO);
-      UserDetails userDetails = userDetailsService.loadUserByUsername(registeredUser.getUsername());
-      String jwtToken = jwtUtil.generateToken(userDetails);
-      return ResponseEntity.ok(new AuthResponse(jwtToken));
-    } catch (UserAlreadyExistsException e) {
-      return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-    }
+    UserEntity registeredUser = userService.register(userRegistrationDTO);
+    UserDetails userDetails = userDetailsService.loadUserByUsername(registeredUser.getUsername());
+    String jwtToken = jwtUtil.generateToken(userDetails);
+
+    return ResponseEntity.ok(
+      SuccessResponseDTO.create(
+        HttpStatus.OK,
+        "Пользователь успешно зарегистрирован",
+        new AuthResponse(jwtToken))
+    );
   }
 
   @PostMapping("/auth")
   public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthRequest authRequest) {
-    try {
-      authenticationManager.authenticate(
-        new UsernamePasswordAuthenticationToken(
-          authRequest.getUsername(),
-          authRequest.getPassword()
-        )
-      );
-    } catch (BadCredentialsException e) {
-      return ResponseEntity.badRequest().body("Неверное имя пользователя или пароль");
-    }
+    authenticationManager.authenticate(
+      new UsernamePasswordAuthenticationToken(
+        authRequest.getUsername(),
+        authRequest.getPassword()
+      )
+    );
 
     final UserDetails userDetails = userDetailsService.loadUserByUsername(authRequest.getUsername());
     final String jwt = jwtUtil.generateToken(userDetails);
 
-    return ResponseEntity.ok(new AuthResponse(jwt));
+    return ResponseEntity.ok(
+      SuccessResponseDTO.create(
+        HttpStatus.OK,
+        "Аутентификация прошла успешно",
+        new AuthResponse(jwt)
+      )
+    );
   }
 
-
-  @ExceptionHandler(UserAlreadyExistsException.class)
-  public ResponseEntity<String> handleUserAlreadyExistsException(UserAlreadyExistsException ex) {
-    return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
-  }
 
   @ExceptionHandler(BadCredentialsException.class)
-  public ResponseEntity<String> handleBadCredentialsException() {
-    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Неверные учетные данные");
+  public ResponseEntity<?> handleBadCredentialsException() {
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+      ErrorResponseDTO.create(
+      HttpStatus.UNAUTHORIZED,
+      "Неверные учетные данные"
+    ));
   }
 }

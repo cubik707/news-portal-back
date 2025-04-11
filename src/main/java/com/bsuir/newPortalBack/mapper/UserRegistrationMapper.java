@@ -1,6 +1,6 @@
 package com.bsuir.newPortalBack.mapper;
 
-import com.bsuir.newPortalBack.dto.UserRegistrationDTO;
+import com.bsuir.newPortalBack.dto.user.UserRegistrationDTO;
 import com.bsuir.newPortalBack.entities.UserEntity;
 import com.bsuir.newPortalBack.entities.UserInfoEntity;
 import org.springframework.stereotype.Component;
