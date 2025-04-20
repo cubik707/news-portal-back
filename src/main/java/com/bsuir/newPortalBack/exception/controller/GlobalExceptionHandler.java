@@ -4,6 +4,7 @@ import com.bsuir.newPortalBack.dto.response.ErrorResponseDTO;
 import com.bsuir.newPortalBack.exception.buisness.UserAlreadyExistsException;
 import com.bsuir.newPortalBack.exception.buisness.UserNotFoundException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,7 +16,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
   @ExceptionHandler(UserAlreadyExistsException.class)
   public ResponseEntity<ErrorResponseDTO> handleUserAlreadyExistsException(UserAlreadyExistsException ex) {
-    return ResponseEntity.status(HttpStatus.CONFLICT).body(ErrorResponseDTO.create(
+    return ResponseEntity
+      .status(HttpStatus.CONFLICT)
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(ErrorResponseDTO.create(
       HttpStatus.CONFLICT,
       ex.getMessage()
     ));
@@ -25,7 +29,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   public ResponseEntity<ErrorResponseDTO> handleUserNotFoundException(
     UserNotFoundException ex, WebRequest request) {
 
-    return ResponseEntity.status(HttpStatus.NOT_FOUND)
+    return ResponseEntity
+      .status(HttpStatus.NOT_FOUND)
+      .contentType(MediaType.APPLICATION_JSON)
       .body(
         ErrorResponseDTO.create(
           HttpStatus.NOT_FOUND,
