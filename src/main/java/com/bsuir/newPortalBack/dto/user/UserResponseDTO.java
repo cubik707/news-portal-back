@@ -1,8 +1,11 @@
 package com.bsuir.newPortalBack.dto.user;
 
+import com.bsuir.newPortalBack.enums.UserRole;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.Set;
 
 @Getter
 @Setter
@@ -16,4 +19,5 @@ public class UserResponseDTO {
   private String surname;
   private String position;
   private String department;
+  Set<UserRole> roles;
 }

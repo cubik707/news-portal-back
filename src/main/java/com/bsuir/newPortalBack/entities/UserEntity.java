@@ -68,6 +68,11 @@ public class UserEntity {
       return this;
     }
 
+    public Builder roles(Set<RoleEntity> roles) {
+      instance.setRoles(roles);
+      return this;
+    }
+
     public Builder userInfo(UserInfoEntity userInfo) {
       instance.setUserInfo(userInfo);
       return this;

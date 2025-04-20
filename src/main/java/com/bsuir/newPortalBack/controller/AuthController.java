@@ -6,7 +6,9 @@ import com.bsuir.newPortalBack.dto.auth.AuthResponse;
 import com.bsuir.newPortalBack.dto.response.ErrorResponseDTO;
 import com.bsuir.newPortalBack.dto.response.SuccessResponseDTO;
 import com.bsuir.newPortalBack.dto.user.UserRegistrationDTO;
+import com.bsuir.newPortalBack.dto.user.UserResponseDTO;
 import com.bsuir.newPortalBack.entities.UserEntity;
+import com.bsuir.newPortalBack.mapper.UserResponseMapper;
 import com.bsuir.newPortalBack.security.UserDetailsServiceImpl;
 import com.bsuir.newPortalBack.service.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -18,7 +20,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +34,7 @@ public class AuthController {
   private final UserDetailsServiceImpl userDetailsService;
   private final JwtUtil jwtUtil;
   private final UserService userService;
+  private final UserResponseMapper userResponseMapper;
 
   @PostMapping("/register")
   public ResponseEntity<?> registerUser(@RequestBody UserRegistrationDTO userRegistrationDTO) {
@@ -62,6 +67,22 @@ public class AuthController {
         HttpStatus.OK,
         "Аутентификация прошла успешно",
         new AuthResponse(jwt)
+      )
+    );
+  }
+
+  @GetMapping("/me")
+  public ResponseEntity<?> me() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String username = authentication.getName();
+    UserEntity user = userService.findByUsername(username);
+    UserResponseDTO response = userResponseMapper.toDTO(user);
+
+    return ResponseEntity.ok(
+      SuccessResponseDTO.create(
+        HttpStatus.OK,
+        "Информация о текущем пользователе",
+        response
       )
     );
   }
