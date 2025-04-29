@@ -5,14 +5,13 @@ import com.bsuir.newPortalBack.dto.user.UserResponseDTO;
 import com.bsuir.newPortalBack.entities.RoleEntity;
 import com.bsuir.newPortalBack.entities.UserEntity;
 import com.bsuir.newPortalBack.enums.UserRole;
-import com.bsuir.newPortalBack.exception.buisness.RoleNotFoundException;
-import com.bsuir.newPortalBack.exception.buisness.UserAlreadyExistsException;
-import com.bsuir.newPortalBack.exception.buisness.UserNotFoundException;
+import com.bsuir.newPortalBack.exception.buisness.*;
 import com.bsuir.newPortalBack.mapper.UserRegistrationMapper;
 import com.bsuir.newPortalBack.mapper.UserResponseMapper;
 import com.bsuir.newPortalBack.repository.RoleRepository;
 import com.bsuir.newPortalBack.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,11 +25,42 @@ public class UserService {
   private final PasswordEncoder passwordEncoder;
   private final UserRegistrationMapper userRegistrationMapper;
   private final UserResponseMapper userResponseMapper;
+  private final EmailService emailService;
 
+  @Value("${spring.mail.username}")
+  private String systemEmail;
 
-  public UserEntity register(UserRegistrationDTO userRegistrationDTO) {
+  public void register(UserRegistrationDTO userRegistrationDTO) {
+    UserEntity user = this.createUser(userRegistrationDTO);;
+
+    emailService.sendHtmlMessage(
+      user.getEmail(),
+      "Регистрация в News Portal",
+      """
+      <h2>Здравствуйте, %s!</h2>
+      <p>Вы успешно зарегистрировались на платформе <strong>News Portal</strong>.</p>
+      <p>Сейчас ваша заявка на регистрацию отправлена администратору и ожидает подтверждения.</p>
+      <p>Как только администратор одобрит вашу учетную запись, вы сможете войти в систему.</p>
+      <br>
+      <p style="color:gray; font-size:12px;">Если вы не регистрировались — просто проигнорируйте это письмо.</p>
+      """.formatted(user.getUsername())
+    );
+  }
+
+  public UserEntity findByUsername(String username) {
+    return userRepo.findByUsername(username)
+      .orElseThrow(() -> new UserNotFoundException(username));
+  }
+
+  public UserEntity createUser(UserRegistrationDTO userRegistrationDTO) {
     if (userRepo.existsByUsername(userRegistrationDTO.getUsername())) {
       throw new UserAlreadyExistsException(userRegistrationDTO.getUsername());
+    }
+    if(userRepo.existsByEmail(userRegistrationDTO.getEmail())) {
+      throw new UserEmailAlreadyExistsException(userRegistrationDTO.getEmail());
+    }
+    if (userRegistrationDTO.getEmail().equalsIgnoreCase(systemEmail)) {
+      throw new BusinessException("Регистрация с системной почтой запрещена", "ERROR_EMAIL");
     }
 
     UserEntity user = userRegistrationMapper.toEntity(userRegistrationDTO);
@@ -41,14 +71,7 @@ public class UserService {
       .orElseThrow(() -> new RoleNotFoundException(UserRole.USER.name()));
     user.getRoles().add(userRole);
 
-    user = userRepo.save(user);
-
-    return user;
-  }
-
-  public UserEntity findByUsername(String username) {
-    return userRepo.findByUsername(username)
-      .orElseThrow(() -> new UserNotFoundException(username));
+    return userRepo.save(user);
   }
 
   public List<UserResponseDTO> getAllUsers() {
