@@ -47,6 +47,7 @@ public class UserController {
     );
   }
 
+  @PreAuthorize("hasRole('ADMIN')")
   @PostMapping
   public ResponseEntity<SuccessResponseDTO> createUser(@RequestBody UserRegistrationDTO userRegistrationDTO) {
     UserResponseDTO createdUser = userResponseMapper.toDTO(userService.createUser(userRegistrationDTO));
@@ -71,6 +72,7 @@ public class UserController {
     );
   }
 
+  @PreAuthorize("hasRole('ADMIN')")
   @DeleteMapping("/{id}")
   public ResponseEntity<SuccessResponseDTO> deleteUser(@PathVariable int id) {
     userService.deleteUser(id);

@@ -43,7 +43,7 @@ public class UserService {
       <p>Как только администратор одобрит вашу учетную запись, вы сможете войти в систему.</p>
       <br>
       <p style="color:gray; font-size:12px;">Если вы не регистрировались — просто проигнорируйте это письмо.</p>
-      """.formatted(user.getUsername())
+      """.formatted(user.getUserInfo().getFirstName())
     );
   }
 
@@ -112,6 +112,18 @@ public class UserService {
   public UserResponseDTO approveUser(int userId) {
     UserEntity user = userRepo.findById(userId)
       .orElseThrow(() -> new UserNotFoundException(userId));
+
+    emailService.sendHtmlMessage(
+      user.getEmail(),
+      "Регистрация в News Portal",
+      """
+      <h2>Здравствуйте, %s!</h2>
+      <p>Ваша учетная запись на платформе <strong>News Portal</strong> была успешно <span style="color:green;">одобрена</span> администратором.</p>
+        <p>Теперь вы можете войти в систему и пользоваться всеми доступными функциями портала.</p>
+        <br>
+        <p style="color:gray; font-size:12px;">Если вы не подавали заявку на регистрацию, просто проигнорируйте это письмо.</p>
+      """.formatted(user.getUserInfo().getFirstName())
+    );
 
     user.setApproved(true);
     UserEntity updated = userRepo.save(user);
