@@ -19,5 +19,6 @@ public class UserResponseDTO {
   private String surname;
   private String position;
   private String department;
+  private boolean isApproved;
   Set<UserRole> roles;
 }

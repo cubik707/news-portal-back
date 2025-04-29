@@ -27,6 +27,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
       logger.warn("Пользователь не найден: {}", username);
       throw new UsernameNotFoundException("Пользователь не найден");
     }
+    if (!userOptional.get().isApproved()) {
+      throw new UsernameNotFoundException("Пользователь не подтвержден");
+    }
     return new UserDetailsImpl(userOptional.get());
   }
 }

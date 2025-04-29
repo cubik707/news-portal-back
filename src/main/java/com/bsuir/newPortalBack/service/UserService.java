@@ -86,14 +86,43 @@ public class UserService {
     userRepo.deleteById(id);
   }
 
-  public UserResponseDTO assignRole(String username, UserRole roleName) {
-    UserEntity user = userRepo.findByUsername(username)
-      .orElseThrow(() -> new UserNotFoundException(username));
+  public UserResponseDTO approveUser(int userId) {
+    UserEntity user = userRepo.findById(userId)
+      .orElseThrow(() -> new UserNotFoundException(userId));
+
+    user.setApproved(true);
+    UserEntity updated = userRepo.save(user);
+    return userResponseMapper.toDTO(updated);
+  }
+
+  public UserResponseDTO assignRole(int id, UserRole roleName) {
+    UserEntity user = userRepo.findById(id)
+      .orElseThrow(() -> new UserNotFoundException(id));
 
     RoleEntity role = roleRepo.findByName(roleName)
       .orElseThrow(() -> new RoleNotFoundException(roleName.name()));
 
     user.getRoles().add(role);
+    UserEntity updatedUser = userRepo.save(user);
+    return userResponseMapper.toDTO(updatedUser);
+  }
+
+  public UserResponseDTO removeRole(int id, UserRole roleName) {
+    UserEntity user = userRepo.findById(id)
+      .orElseThrow(() -> new UserNotFoundException(id));
+
+    RoleEntity role = roleRepo.findByName(roleName)
+      .orElseThrow(() -> new RoleNotFoundException(roleName.name()));
+
+    if (!user.getRoles().contains(role)) {
+      throw new RoleNotFoundException("У пользователя нет роли: " + roleName);
+    }
+
+    if (roleName == UserRole.USER) {
+      throw new IllegalStateException("Нельзя удалить базовую роль USER");
+    }
+
+    user.getRoles().remove(role);
     UserEntity updatedUser = userRepo.save(user);
     return userResponseMapper.toDTO(updatedUser);
   }
