@@ -1,6 +1,7 @@
 package com.bsuir.newPortalBack.security;
 
 import com.bsuir.newPortalBack.entities.UserEntity;
+import com.bsuir.newPortalBack.exception.buisness.UserNotApprovedException;
 import com.bsuir.newPortalBack.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -26,6 +27,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     if (userOptional.isEmpty()) {
       logger.warn("Пользователь не найден: {}", username);
       throw new UsernameNotFoundException("Пользователь не найден");
+    }
+    if (!userOptional.get().isApproved()) {
+      throw new UserNotApprovedException("Пользователь не подтвержден");
     }
     return new UserDetailsImpl(userOptional.get());
   }

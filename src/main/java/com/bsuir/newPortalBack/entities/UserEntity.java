@@ -73,6 +73,11 @@ public class UserEntity {
       return this;
     }
 
+    public Builder isApproved(boolean isApproved) {
+      instance.setApproved(isApproved);
+      return this;
+    }
+
     public Builder userInfo(UserInfoEntity userInfo) {
       instance.setUserInfo(userInfo);
       return this;

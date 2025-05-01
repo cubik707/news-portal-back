@@ -29,6 +29,7 @@ public class UserResponseMapper implements BaseMapper<UserEntity, UserResponseDT
       .id(entity.getId())
       .email(entity.getEmail())
       .username(entity.getUsername())
+      .isApproved(entity.isApproved())
       .roles(mapRoles(entity.getRoles()));
 
     if(entity.getUserInfo() != null) {
@@ -61,13 +62,13 @@ public class UserResponseMapper implements BaseMapper<UserEntity, UserResponseDT
       .email(dto.getEmail())
       .roles(mapRolesToEntities(dto.getRoles()))
       .userInfo(userInfo)
+      .isApproved(dto.isApproved())
       .build();
 
     // Setting the reverse relationship
     if (userInfo != null) {
       userInfo.setUser(user);
     }
-
     return user;
   }
 

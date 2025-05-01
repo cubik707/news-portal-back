@@ -39,16 +39,14 @@ public class AuthController {
 
   @PostMapping("/register")
   public ResponseEntity<?> registerUser(@RequestBody UserRegistrationDTO userRegistrationDTO) {
-    UserEntity registeredUser = userService.register(userRegistrationDTO);
-    UserDetails userDetails = userDetailsService.loadUserByUsername(registeredUser.getUsername());
-    String jwtToken = jwtUtil.generateToken(userDetails);
+    userService.register(userRegistrationDTO);
 
     return ResponseEntity.ok(
       SuccessResponseDTO.create(
         HttpStatus.OK,
         "Пользователь успешно зарегистрирован",
-        new AuthResponse(jwtToken))
-    );
+        "Заявка на регистрацию в портале успешно отправлена! Дождитесь, пока администратор ее одобрит."
+      ));
   }
 
   @PostMapping("/auth")
