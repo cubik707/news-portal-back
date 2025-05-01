@@ -16,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +32,7 @@ public class UserService {
   private String systemEmail;
 
   public void register(UserRegistrationDTO userRegistrationDTO) {
-    UserEntity user = this.createUser(userRegistrationDTO);;
+    UserEntity user = this.createUser(userRegistrationDTO);
 
     emailService.sendHtmlMessage(
       user.getEmail(),
@@ -100,6 +101,29 @@ public class UserService {
 
     UserEntity updatedUser = userRepo.save(user);
     return userResponseMapper.toDTO(updatedUser);
+  }
+
+  public void updateUserField(int id, Map<String, Object> updatedUserField) {
+    UserEntity user = userRepo.findById(id)
+      .orElseThrow(() -> new UserNotFoundException(id));
+
+    Map.Entry<String, Object> entry = updatedUserField.entrySet().iterator().next();
+    String field = entry.getKey();
+    Object value = entry.getValue();
+
+    switch (field) {
+      case "username" -> user.setUsername((String) value);
+      case "email" -> user.setEmail((String) value);
+      case "lastName" -> user.getUserInfo().setLastName((String) value);
+      case "firstName" -> user.getUserInfo().setFirstName((String) value);
+      case "surname" -> user.getUserInfo().setSurname((String) value);
+      case "position" -> user.getUserInfo().setPosition((String) value);
+      case "department" -> user.getUserInfo().setDepartment((String) value);
+      default -> throw new BusinessException("Поле '" + field + "' не поддерживается", "ERROR_FIELD");
+
+    }
+
+    userRepo.save(user);
   }
 
   public void deleteUser(int id) {

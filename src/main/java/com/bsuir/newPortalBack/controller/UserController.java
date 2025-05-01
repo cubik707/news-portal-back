@@ -3,6 +3,7 @@ package com.bsuir.newPortalBack.controller;
 import com.bsuir.newPortalBack.dto.response.SuccessResponseDTO;
 import com.bsuir.newPortalBack.dto.user.UserRegistrationDTO;
 import com.bsuir.newPortalBack.dto.user.UserResponseDTO;
+import com.bsuir.newPortalBack.exception.buisness.BusinessException;
 import com.bsuir.newPortalBack.mapper.UserResponseMapper;
 import com.bsuir.newPortalBack.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Map;
 
 @Tag(name="user")
 @RestController
@@ -71,6 +73,21 @@ public class UserController {
       )
     );
   }
+
+  @PatchMapping("/{id}")
+  public ResponseEntity<SuccessResponseDTO> updateUserField (@PathVariable int id, @RequestBody Map<String, Object> updateField) {
+    if (updateField.size() != 1) {
+      throw new BusinessException("Можно обновить только одно поле за раз", "ONLY_ONE_FIELD");
+    }
+    userService.updateUserField(id, updateField);
+    return ResponseEntity.ok(
+      SuccessResponseDTO.create(
+        HttpStatus.OK,
+        "Поле пользователя успешно обновлено",
+        null
+      ));
+  }
+
 
   @PreAuthorize("hasRole('ADMIN')")
   @DeleteMapping("/{id}")
