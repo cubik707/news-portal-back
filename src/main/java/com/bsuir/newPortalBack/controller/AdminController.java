@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Set;
 
 @Tag(name = "admin")
 @RestController
@@ -22,7 +21,7 @@ public class AdminController {
 
   private final UserService userService;
 
-  @PatchMapping("/user/{id}/approve")
+  @PatchMapping("/users/{id}/approve")
   public ResponseEntity<SuccessResponseDTO> approveUser(@PathVariable int id) {
     UserResponseDTO user = userService.approveUser(id);
     return ResponseEntity.ok(
@@ -34,7 +33,7 @@ public class AdminController {
     );
   }
 
-  @PatchMapping("/user/{id}/roles")
+  @PatchMapping("/users/{id}/roles")
   public ResponseEntity<SuccessResponseDTO> updateUserRoles(
     @PathVariable int id,
     @RequestBody UpdateRoleRequestDTO req
@@ -60,7 +59,7 @@ public class AdminController {
     }
   }
 
-  @DeleteMapping("/user/{id}/roles")
+  @DeleteMapping("/users/{id}/roles")
   public ResponseEntity<SuccessResponseDTO> removeUserRole(
     @PathVariable int id,
     @RequestBody UpdateRoleRequestDTO req
