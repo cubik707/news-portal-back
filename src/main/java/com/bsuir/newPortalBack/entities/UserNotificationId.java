@@ -5,7 +5,7 @@ import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 
 @Embeddable
-class UserNotificationId implements Serializable {
+public class UserNotificationId implements Serializable {
   private Long userId;
   private Long notificationId;
 }
