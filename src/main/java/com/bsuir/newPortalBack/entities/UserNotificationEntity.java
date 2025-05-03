@@ -17,7 +17,7 @@ public class UserNotificationEntity {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @MapsId("userId")
-  @JoinColumn(name = "user_id")
+  @JoinColumn(name = "user_id", nullable = false)
   private UserEntity user;
 
   @ManyToOne(fetch = FetchType.LAZY)
