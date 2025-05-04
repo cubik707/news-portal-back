@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/categories")
+@RequestMapping("/categories")
 @RequiredArgsConstructor
 public class NewsCategoriesController {
 
@@ -29,6 +29,18 @@ public class NewsCategoriesController {
         HttpStatus.OK,
         "Список категорий успешно получен",
         categories
+      )
+    );
+  }
+
+  @GetMapping("/{id}")
+  public ResponseEntity<SuccessResponseDTO> getCategory(@PathVariable int id) {
+    NewsCategoryDTO category = newsCategoryService.getCategoryById(id);
+    return ResponseEntity.ok(
+      SuccessResponseDTO.create(
+        HttpStatus.OK,
+        "Категория успешно получена",
+        category
       )
     );
   }
