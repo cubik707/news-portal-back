@@ -22,7 +22,7 @@ public class NewsCategoryService {
   private final NewsCategoryMapper newsCategoryMapper;
 
   @Transactional(readOnly = true)
-  List<NewsCategoryDTO> getAllCategories() {
+  public List<NewsCategoryDTO> getAllCategories() {
     List<NewsCategoryEntity> categories = newsCategoryRepo.findAll();
     return newsCategoryMapper.toDTOList(
       categories

@@ -1,4 +1,7 @@
 package com.bsuir.newPortalBack.repository;
 
-public interface NotificationRepository {
+import com.bsuir.newPortalBack.entities.NotificationEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface NotificationRepository extends JpaRepository<NotificationEntity, Integer> {
 }

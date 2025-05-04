@@ -6,6 +6,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "news")
@@ -45,4 +47,12 @@ public class NewsEntity {
 
   @UpdateTimestamp
   private LocalDateTime updatedAt;
+
+  @ManyToMany
+  @JoinTable(
+    name = "news_tags",
+    joinColumns = @JoinColumn(name = "news_id"),
+    inverseJoinColumns = @JoinColumn(name = "tag_id")
+  )
+  private List<TagEntity> tags = new ArrayList<>();
 }

@@ -6,6 +6,6 @@ import java.io.Serializable;
 
 @Embeddable
 public class UserNotificationId implements Serializable {
-  private Long userId;
-  private Long notificationId;
+  private int userId;
+  private int notificationId;
 }
