@@ -29,7 +29,7 @@ public class NewsCategoryService {
     );
   }
 
-  @Transactional
+  @Transactional(readOnly = true)
   public NewsCategoryDTO getCategoryById(int id) {
     NewsCategoryEntity newsCategoryEntity = newsCategoryRepo.findById(id)
       .orElseThrow(() -> new NewsCategoryNotFoundException(id));
