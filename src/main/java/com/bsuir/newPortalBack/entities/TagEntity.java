@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "tags")
+@Table(name = "tags",
+  uniqueConstraints = @UniqueConstraint(columnNames = "name"))
 @Getter
 @Setter
 @Builder

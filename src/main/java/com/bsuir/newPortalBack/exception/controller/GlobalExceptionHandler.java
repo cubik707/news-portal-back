@@ -26,9 +26,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
       .status(HttpStatus.CONFLICT)
       .contentType(MediaType.APPLICATION_JSON)
       .body(ErrorResponseDTO.create(
-      HttpStatus.CONFLICT,
-      ex.getMessage()
-    ));
+        HttpStatus.CONFLICT,
+        ex.getMessage()
+      ));
   }
 
   @ExceptionHandler(UserEmailAlreadyExistsException.class)
@@ -46,6 +46,48 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   public ResponseEntity<ErrorResponseDTO> handleUserNotFoundException(
     UserNotFoundException ex, WebRequest request) {
 
+    return ResponseEntity
+      .status(HttpStatus.NOT_FOUND)
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(
+        ErrorResponseDTO.create(
+          HttpStatus.NOT_FOUND,
+          ex.getMessage()
+        )
+      );
+  }
+
+  @ExceptionHandler(NewsNotFoundException.class)
+  public ResponseEntity<ErrorResponseDTO> handleNewsNotFoundException(
+    NewsNotFoundException ex, WebRequest request) {
+    return ResponseEntity
+      .status(HttpStatus.NOT_FOUND)
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(
+        ErrorResponseDTO.create(
+          HttpStatus.NOT_FOUND,
+          ex.getMessage()
+        )
+      );
+  }
+
+  @ExceptionHandler(TagNotFoundException.class)
+  public ResponseEntity<ErrorResponseDTO> handleTagNotFoundException(
+    TagNotFoundException ex, WebRequest request) {
+    return ResponseEntity
+      .status(HttpStatus.NOT_FOUND)
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(
+        ErrorResponseDTO.create(
+          HttpStatus.NOT_FOUND,
+          ex.getMessage()
+        )
+      );
+  }
+
+  @ExceptionHandler(NewsCategoryNotFoundException.class)
+  public ResponseEntity<ErrorResponseDTO> handleNewsCategoryNotFoundException(
+    NewsCategoryNotFoundException ex, WebRequest request) {
     return ResponseEntity
       .status(HttpStatus.NOT_FOUND)
       .contentType(MediaType.APPLICATION_JSON)

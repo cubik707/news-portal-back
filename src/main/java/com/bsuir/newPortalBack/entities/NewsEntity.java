@@ -2,6 +2,7 @@ package com.bsuir.newPortalBack.entities;
 
 import com.bsuir.newPortalBack.enums.NewsStatus;
 import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -11,6 +12,11 @@ import java.util.List;
 
 @Entity
 @Table(name = "news")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public class NewsEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
