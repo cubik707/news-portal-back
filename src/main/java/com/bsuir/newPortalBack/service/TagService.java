@@ -39,4 +39,10 @@ public class TagService {
     TagEntity createdTag = tagRepository.save(tag);
     return tagMapper.toDTO(createdTag);
   }
+
+  @Transactional(readOnly = true)
+  public List<TagDTO> getLast3Tags() {
+    List<TagEntity> tags = tagRepository.findTop3ByOrderByIdDesc();
+    return tagMapper.toDTOList(tags);
+  }
 }

@@ -55,4 +55,16 @@ public class TagController {
     );
   }
 
+  @GetMapping("/last-three")
+  public ResponseEntity<SuccessResponseDTO> getLast3Tags() {
+    List<TagDTO> tags = tagService.getLast3Tags();
+    return ResponseEntity.ok(
+      SuccessResponseDTO.create(
+        HttpStatus.OK,
+        "Последние 3 тэга успешно получены",
+        tags
+      )
+    );
+  }
+
 }

@@ -79,7 +79,7 @@ public class NewsController {
     return ResponseEntity.ok(
       SuccessResponseDTO.create(
         HttpStatus.OK,
-        "Новость успшено получена",
+        "Новость успешно получена",
         newsDTO
       )
     );
