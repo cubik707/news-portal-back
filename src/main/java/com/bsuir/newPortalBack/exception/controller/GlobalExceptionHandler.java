@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
@@ -110,5 +113,29 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
           ex.getMessage()
         )
       );
+  }
+
+
+  @ExceptionHandler({IllegalArgumentException.class, SecurityException.class})
+  public ResponseEntity<ErrorResponseDTO> handleBadRequest(Exception ex) {
+    return ResponseEntity.badRequest().body(
+      ErrorResponseDTO.create(HttpStatus.BAD_REQUEST, ex.getMessage())
+    );
+  }
+
+  @ExceptionHandler(FileNotFoundException.class)
+  public ResponseEntity<ErrorResponseDTO> handleNotFound(Exception ex) {
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+      ErrorResponseDTO.create(HttpStatus.NOT_FOUND, ex.getMessage())
+    );
+  }
+
+  @ExceptionHandler(IOException.class)
+  public ResponseEntity<ErrorResponseDTO> handleIOExceptions(Exception ex) {
+    return ResponseEntity.internalServerError().body(
+      ErrorResponseDTO.create(
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        "Ошибка при работе с файловой системой")
+    );
   }
 }
