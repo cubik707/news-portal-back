@@ -9,5 +9,6 @@ public class PasswordGenerator {
     System.out.println("editor1: " + encoder.encode("pass123"));
     System.out.println("user1: " + encoder.encode("pass123"));
     System.out.println("dev_anna: " + encoder.encode("pass123"));
+    System.out.println("testuser: " + encoder.encode("pass"));
   }
 }
