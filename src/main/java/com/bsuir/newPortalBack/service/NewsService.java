@@ -98,6 +98,13 @@ public class NewsService {
   }
 
   @Transactional(readOnly = true)
+  public List<NewsDTO> getNewsByStatusAndAuthorId(NewsStatus status, int authorId) {
+    return newsMapper.toDTOList(
+      newsRepo.findByStatusAndAuthor_Id(status, authorId)
+    );
+  }
+
+  @Transactional(readOnly = true)
   public List<NewsDTO> getNewsByCategoryAndStatus(int categoryId, NewsStatus status) {
     return newsMapper.toDTOList(
       newsRepo.findByCategory_IdAndStatus(categoryId, status)

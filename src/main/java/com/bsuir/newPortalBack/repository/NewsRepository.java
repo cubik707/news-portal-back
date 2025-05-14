@@ -10,4 +10,5 @@ public interface NewsRepository extends JpaRepository<NewsEntity, Integer> {
   List<NewsEntity> findByCategory_Id(int id);
   List<NewsEntity> findByStatus(NewsStatus status);
   List<NewsEntity> findByCategory_IdAndStatus(int categoryId, NewsStatus status);
+  List<NewsEntity> findByStatusAndAuthor_Id(NewsStatus status, int authorId);
 }

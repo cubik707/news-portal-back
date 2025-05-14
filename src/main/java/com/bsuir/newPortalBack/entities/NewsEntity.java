@@ -2,6 +2,7 @@ package com.bsuir.newPortalBack.entities;
 
 import com.bsuir.newPortalBack.enums.NewsStatus;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -25,7 +26,7 @@ public class NewsEntity {
   @Column(nullable = false)
   private String title;
 
-  @Lob
+  @Size(max = 5000, message = "Content must be less than 5000 characters")
   @Column(nullable = false)
   private String content;
 

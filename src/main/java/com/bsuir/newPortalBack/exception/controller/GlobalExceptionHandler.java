@@ -2,6 +2,7 @@ package com.bsuir.newPortalBack.exception.controller;
 
 import com.bsuir.newPortalBack.dto.response.ErrorResponseDTO;
 import com.bsuir.newPortalBack.exception.buisness.*;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,24 @@ import java.io.IOException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+
+  @ExceptionHandler(DataIntegrityViolationException.class)
+  public ResponseEntity<ErrorResponseDTO> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+    ErrorResponseDTO error = ErrorResponseDTO.create(
+      HttpStatus.BAD_REQUEST,
+      "Data error: " + ex.getMostSpecificCause().getMessage()
+    );
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+  }
+
+  @ExceptionHandler(Exception.class)
+  public ResponseEntity<ErrorResponseDTO> handleAllExceptions(Exception ex) {
+    ErrorResponseDTO error = ErrorResponseDTO.create(
+      HttpStatus.INTERNAL_SERVER_ERROR,
+      "Internal server error: " + ex.getMessage()
+    );
+    return ResponseEntity.internalServerError().body(error);
+  }
 
   @ExceptionHandler(BusinessException.class)
   public ResponseEntity<ErrorResponseDTO> handleBusinessException(BusinessException ex) {

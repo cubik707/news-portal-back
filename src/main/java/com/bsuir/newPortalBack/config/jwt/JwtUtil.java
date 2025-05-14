@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +14,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtUtil {
@@ -30,8 +32,11 @@ public class JwtUtil {
 
   // Generates a JWT token for authenticated user
   public String generateToken(UserDetails userDetails) {
-    Map<String, Object> claims = new HashMap<>(); // Additional claims (empty by default)
-    return createToken(claims, userDetails.getUsername()); // Delegate token creation
+    Map<String, Object> claims = new HashMap<>();
+    claims.put("roles", userDetails.getAuthorities().stream()
+      .map(GrantedAuthority::getAuthority)
+      .collect(Collectors.toSet()));
+    return createToken(claims, userDetails.getUsername());
   }
 
   // Creates a signed JWT token with specified claims and subject
@@ -46,9 +51,13 @@ public class JwtUtil {
   }
 
   // Validates if the token matches the user and is not expired
-  public Boolean validateToken(String token, UserDetails userDetails) {
-    final String username = extractUsername(token);
-    return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+  public Boolean validateToken(String token) {
+    try {
+      Claims claims = extractAllClaims(token); // Проверяет подпись и срок
+      return !isTokenExpired(token);
+    } catch (Exception e) {
+      return false;
+    }
   }
 
   // Extracts username (subject) from the token
@@ -68,7 +77,7 @@ public class JwtUtil {
   }
 
   // Parses the token and extracts all claims (payload)
-  private Claims extractAllClaims(String token) {
+  public Claims extractAllClaims(String token) {
     return Jwts.parser()
       .verifyWith(getSigningKey()) // Set key for signature verification
       .build() // Build the parser
@@ -78,6 +87,7 @@ public class JwtUtil {
 
   // Checks if the token is expired
   private Boolean isTokenExpired(String token) {
-    return extractExpiration(token).before(new Date()); // Compare expiration date with current time
+    final Date expiration = extractExpiration(token);
+    return expiration.before(new Date());
   }
 }

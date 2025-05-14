@@ -98,7 +98,7 @@ public class AuthController {
       String username = jwtUtil.extractUsername(jwt);
       UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-      if (!jwtUtil.validateToken(jwt, userDetails)) {
+      if (!jwtUtil.validateToken(jwt)) {
         return createUnauthorizedResponse("Токен невалиден");
       }
 

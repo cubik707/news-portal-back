@@ -22,7 +22,7 @@ public class NewsController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  @PreAuthorize("hasRole('EDITOR')")
+  @PreAuthorize("hasAuthority('EDITOR')")
   public ResponseEntity<SuccessResponseDTO> createNews(@RequestBody NewsCreateDTO createDTO) {
     NewsDTO newsDTO = newsService.createNews(createDTO);
     return ResponseEntity.status(HttpStatus.CREATED).body(
@@ -36,7 +36,7 @@ public class NewsController {
 
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @PreAuthorize("hasAnyRole('EDITOR', 'ADMIN')")
+  @PreAuthorize("hasAnyAuthority('EDITOR', 'ADMIN')")
   public ResponseEntity<SuccessResponseDTO> deleteNews(@PathVariable int id) {
     newsService.deleteNews(id);
 
@@ -94,6 +94,21 @@ public class NewsController {
       SuccessResponseDTO.create(
         HttpStatus.OK,
         "Список новостей по статусу успешно получен",
+        newsDTOList
+      )
+    );
+  }
+
+  @GetMapping("/author/{authorId}/status")
+  public ResponseEntity<SuccessResponseDTO> getNewsByStatusAndAuthorId(
+    @PathVariable int authorId,
+    @RequestParam NewsStatus status
+  ) {
+    List<NewsDTO> newsDTOList = newsService.getNewsByStatusAndAuthorId(status, authorId);
+    return ResponseEntity.ok(
+      SuccessResponseDTO.create(
+        HttpStatus.OK,
+        "Список новостей по статусу и автору успешно получен",
         newsDTOList
       )
     );
