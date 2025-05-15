@@ -38,7 +38,8 @@ public class UserResponseMapper implements BaseMapper<UserEntity, UserResponseDT
         .lastName(entity.getUserInfo().getLastName())
         .surname(entity.getUserInfo().getSurname())
         .department(entity.getUserInfo().getDepartment())
-        .position(entity.getUserInfo().getPosition());
+        .position(entity.getUserInfo().getPosition())
+        .avatarUrl(entity.getUserInfo().getAvatarUrl());
     }
     return userResponseDTO.build();
   }
@@ -55,6 +56,7 @@ public class UserResponseMapper implements BaseMapper<UserEntity, UserResponseDT
       .surname(dto.getSurname())
       .position(dto.getPosition())
       .department(dto.getDepartment())
+      .avatarUrl(dto.getAvatarUrl())
       .build();
     UserEntity user = UserEntity.builder()
       .id(dto.getId())

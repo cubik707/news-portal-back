@@ -13,6 +13,10 @@ spring.jpa.hibernate.ddl-auto=validate
 spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.format_sql=true
 
+# Миграции
+spring.flyway.validate-on-migrate=true
+spring.flyway.baseline-on-migrate=true
+
 # Логирование
 logging.level.org.springframework.security=DEBUG
 
@@ -27,3 +31,11 @@ spring.mail.username=${MAIL_USERNAME}
 spring.mail.password=${MAIL_PASSWORD}
 spring.mail.properties.mail.smtp.auth=true
 spring.mail.properties.mail.smtp.starttls.enable=true
+
+# Разрешение загрузки файлов
+spring.servlet.multipart.enabled=true
+spring.servlet.multipart.max-file-size=5MB
+spring.servlet.multipart.max-request-size=5MB
+
+# Путь для загрузки внутри проекта (используем абсолютный путь)
+app.upload.dir=${user.dir}/src/main/resources/static/uploads

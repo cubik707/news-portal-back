@@ -6,7 +6,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -44,6 +46,17 @@ public class UserEntity {
   @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
   @JsonManagedReference
   private UserInfoEntity userInfo;
+
+  @ManyToMany
+  @JoinTable(
+    name = "user_subscriptions",
+    joinColumns = @JoinColumn(name = "user_id"),
+    inverseJoinColumns = @JoinColumn(name = "category_id")
+  )
+  private Set<NewsCategoryEntity> subscribedCategories = new HashSet<>();
+
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<UserNotificationEntity> notifications = new ArrayList<>();
 
   //Builder pattern implementation
   public static class Builder {

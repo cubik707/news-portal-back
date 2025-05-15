@@ -97,12 +97,6 @@ CREATE TABLE likes
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
 
--- 10. Таблица tags (Теги)
-CREATE TABLE tags
-(
-    id   INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL
-);
 
 -- 11. Таблица news_tags (Связь новостей и тегов)
 CREATE TABLE news_tags

@@ -34,6 +34,8 @@ public class UserService {
   public void register(UserRegistrationDTO userRegistrationDTO) {
     UserEntity user = this.createUser(userRegistrationDTO);
 
+    user.setPasswordHash(passwordEncoder.encode(userRegistrationDTO.getPassword()));
+
     emailService.sendHtmlMessage(
       user.getEmail(),
       "Регистрация в News Portal",
