@@ -24,7 +24,7 @@ public class UserController {
   private final UserService userService;
   private final UserResponseMapper userResponseMapper;
 
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAuthority('ADMIN')")
   @GetMapping
   public ResponseEntity<SuccessResponseDTO> getAllUsers() {
     List<UserResponseDTO> users = userService.getAllUsers();
@@ -49,7 +49,7 @@ public class UserController {
     );
   }
 
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAuthority('ADMIN')")
   @PostMapping
   public ResponseEntity<SuccessResponseDTO> createUser(@RequestBody UserRegistrationDTO userRegistrationDTO) {
     UserResponseDTO createdUser = userResponseMapper.toDTO(userService.createUser(userRegistrationDTO));
@@ -89,7 +89,7 @@ public class UserController {
   }
 
 
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAuthority('ADMIN')")
   @DeleteMapping("/{id}")
   public ResponseEntity<SuccessResponseDTO> deleteUser(@PathVariable int id) {
     userService.deleteUser(id);

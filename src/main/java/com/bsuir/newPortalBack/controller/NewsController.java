@@ -3,6 +3,7 @@ package com.bsuir.newPortalBack.controller;
 
 import com.bsuir.newPortalBack.dto.news.NewsCreateDTO;
 import com.bsuir.newPortalBack.dto.news.NewsDTO;
+import com.bsuir.newPortalBack.dto.news.NewsUpdateDTO;
 import com.bsuir.newPortalBack.dto.response.SuccessResponseDTO;
 import com.bsuir.newPortalBack.enums.NewsStatus;
 import com.bsuir.newPortalBack.service.NewsService;
@@ -45,6 +46,22 @@ public class NewsController {
         HttpStatus.OK,
         "Новость была успешно удалена",
         null
+      )
+    );
+  }
+
+  @PutMapping("/{id}")
+  @PreAuthorize("hasAuthority('EDITOR')")
+  public ResponseEntity<SuccessResponseDTO> updateNews(
+    @PathVariable int id,
+    @RequestBody NewsUpdateDTO updateDTO
+  ) {
+    NewsDTO updatedNews = newsService.updateNews(id, updateDTO);
+    return ResponseEntity.ok(
+      SuccessResponseDTO.create(
+        HttpStatus.OK,
+        "Новость успешно обновлена",
+        updatedNews
       )
     );
   }

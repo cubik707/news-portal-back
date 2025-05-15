@@ -43,7 +43,7 @@ public class TagController {
   }
 
   @PostMapping
-  @PreAuthorize("hasRole('EDITOR')")
+  @PreAuthorize("hasAuthority('EDITOR')")
   public ResponseEntity<SuccessResponseDTO> createTag(@RequestBody TagCreateDTO tagCreateDTO) {
     TagDTO tagDTO = tagService.createTag(tagCreateDTO);
     return ResponseEntity.status(HttpStatus.CREATED).body(

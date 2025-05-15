@@ -46,7 +46,7 @@ public class NewsCategoriesController {
   }
 
   @PostMapping
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAuthority('ADMIN')")
   public ResponseEntity<SuccessResponseDTO> createCategory(@Valid @RequestBody NewsCategoryCreateDTO dto) {
     NewsCategoryDTO createdCategory = newsCategoryService.createCategory(dto);
     return ResponseEntity.status(HttpStatus.CREATED).body(
@@ -59,7 +59,7 @@ public class NewsCategoriesController {
   }
 
   @PutMapping("/{id}")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAuthority('ADMIN')")
   public ResponseEntity<? extends BaseResponseDTO> updateCategory(
     @PathVariable int id,
     @Valid @RequestBody NewsCategoryCreateDTO dto
@@ -75,7 +75,7 @@ public class NewsCategoriesController {
     }
 
   @DeleteMapping("/{id}")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasAuthority('ADMIN')")
   public ResponseEntity<? extends BaseResponseDTO> deleteCategory(@PathVariable int id) {
     newsCategoryService.deleteCategory(id);
     return ResponseEntity.ok(

@@ -2,6 +2,7 @@ package com.bsuir.newPortalBack.service;
 
 import com.bsuir.newPortalBack.dto.news.NewsCreateDTO;
 import com.bsuir.newPortalBack.dto.news.NewsDTO;
+import com.bsuir.newPortalBack.dto.news.NewsUpdateDTO;
 import com.bsuir.newPortalBack.entities.NewsCategoryEntity;
 import com.bsuir.newPortalBack.entities.NewsEntity;
 import com.bsuir.newPortalBack.entities.TagEntity;
@@ -73,6 +74,38 @@ public class NewsService {
       throw new NewsNotFoundException(id);
     }
     newsRepo.deleteById(id);
+  }
+
+  @Transactional
+  public NewsDTO updateNews(int id, NewsUpdateDTO updateDTO) {
+    NewsEntity existingNews = newsRepo.findById(id)
+      .orElseThrow(() -> new NewsNotFoundException(id));
+
+    if (updateDTO.getTitle() != null) {
+      existingNews.setTitle(updateDTO.getTitle());
+    }
+
+    if (updateDTO.getContent() != null) {
+      existingNews.setContent(updateDTO.getContent());
+    }
+
+    if (updateDTO.getCategoryId() != null) {
+      NewsCategoryEntity category = categoryRepository.findById(updateDTO.getCategoryId())
+        .orElseThrow(() -> new NewsCategoryNotFoundException(updateDTO.getCategoryId()));
+      existingNews.setCategory(category);
+    }
+
+    if (updateDTO.getTags() != null) {
+      List<TagEntity> tags = createOrGetTags(updateDTO.getTags());
+      existingNews.setTags(tags);
+    }
+
+    if (updateDTO.getStatus() != null) {
+      existingNews.setStatus(updateDTO.getStatus());
+    }
+
+    NewsEntity updatedNews = newsRepo.save(existingNews);
+    return newsMapper.toDTO(updatedNews);
   }
 
   @Transactional(readOnly = true)
